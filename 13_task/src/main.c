@@ -41,27 +41,7 @@ LOG_MODULE_REGISTER(main);
 
 int main(void)
 {
-    int ret;
-
     k_mutex_init(&sensor_data_mutex);
-
-    ret = hun_temp_sensor_init();
-    if (ret < 0) {
-        LOG_ERR("Humidity-Temperature Sensor init failed");
-        return ret;
-    }
-
-    ret = pressure_sensor_init();
-    if (ret < 0) {
-        LOG_ERR("Pressure Sensor init failed");
-        return ret;
-    }
-
-    ret = imu_sensor_init();
-    if (ret < 0) {
-        LOG_ERR("IMU Sensor init failed");
-        return ret;
-    }
 
     return 0;
 }
@@ -217,8 +197,31 @@ static int shell_stop_storage_thread(const struct shell *sh, size_t argc, char *
     return 0;
 }
 
-SHELL_STATIC_SUBCMD_SET_CREATE(
-    sub_demo, SHELL_CMD(start_hum_temp, NULL, "Start HTS221 thread", shell_start_hum_temp_thread),
+static int shell_fetch_sample(const struct shell *sh, size_t argc, char **argv)
+{
+    int ret;
+    ret = hun_temp_sensor_init();
+    if (ret < 0) {
+        LOG_ERR("Humidity-Temperature Sensor init failed");
+        return ret;
+    }
+
+    ret = pressure_sensor_init();
+    if (ret < 0) {
+        LOG_ERR("Pressure Sensor init failed");
+        return ret;
+    }
+
+    ret = imu_sensor_init();
+    if (ret < 0) {
+        LOG_ERR("IMU Sensor init failed");
+        return ret;
+    }
+    return 0;
+}
+SHELL_STATIC_SUBCMD_SET_CREATE(sub_demo, 
+    SHELL_CMD(fetch_sample, NULL, "Start HTS221 thread", shell_fetch_sample),
+    SHELL_CMD(start_hum_temp, NULL, "Start HTS221 thread", shell_start_hum_temp_thread),
     SHELL_CMD(start_pressure, NULL, "Start LPS22HB thread", shell_start_pressure_thread),
     SHELL_CMD(start_imu, NULL, "Start LSM6DSL thread", shell_start_imu_thread),
     SHELL_CMD(start, NULL, "Start all sensor threads", shell_start_all_sensors),
