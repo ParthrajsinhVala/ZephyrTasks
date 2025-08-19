@@ -1,0 +1,77 @@
+/ {
+    aliases {
+        ht-sensor = &hts;
+        pressure-sensor = &lps22hb;
+        imu-sensor = &lsm6dsl;
+    };
+};
+
+&i2c2 {
+
+    hts: hts221@5f {
+        compatible = "st,hts221";
+        reg = <0x5f>;
+        drdy-gpios = <&gpiod 15 GPIO_ACTIVE_HIGH>;
+    };
+
+    lps22hb: lps22hb-press@5d {
+        compatible = "st,lps22hb-press";
+        reg = <0x5d>;
+    };
+
+    lsm6dsl: lsm6dsl@6a {
+        compatible = "st,lsm6dsl";
+        reg = <0x6a>;
+        irq-gpios = <&gpiod 11 GPIO_ACTIVE_HIGH>;
+    };
+};
+
+&flash0 {
+    partitions {
+        compatible = "fixed-partitions";
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        boot_partition: partition@0 {
+            label = "mcuboot";
+            reg = <0x0 DT_SIZE_K(64)>;
+            read-only;
+        };
+
+        slot0_partition: partition@10000 {
+            label = "image-0";
+            reg = <0x10000 DT_SIZE_K(64)>;
+        };
+
+        storage1_partition: partition@20000 {
+            label = "storage1";
+            reg = <0x20000 DT_SIZE_K(64)>;
+        };
+
+        lfs1_partition: partition@30000 {
+            label = "lfs1";
+            reg = <0x30000 DT_SIZE_K(800)>;
+        };
+    };
+};
+
+/ {
+    /* Filesystem table with full LittleFS config */
+    fstab {
+        compatible = "zephyr,fstab";
+
+        lfs1: lfs1 {
+            compatible = "zephyr,fstab,littlefs";
+            partition = <&lfs1_partition>;
+            mount-point = "/lfs1";
+            automount;
+
+            /* Hardware-specific config for STM32L475 */
+            read-size = <8>;
+            prog-size = <8>;
+            cache-size = <64>;
+            lookahead-size = <16>;
+            block-cycles = <512>;
+        };
+    };
+};
