@@ -278,7 +278,7 @@ int main(void)
     k_mutex_init(&sensor_data_mutex);
 
     /* Initialize sensors */
-    ret = hum_temp_sensor_init();
+    ret = hun_temp_sensor_init();
     if (ret < 0) {
         LOG_ERR("Humidity-Temperature Sensor init failed");
     }
