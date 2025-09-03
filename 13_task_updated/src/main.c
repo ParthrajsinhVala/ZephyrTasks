@@ -121,7 +121,7 @@ LOG_MODULE_REGISTER(main);
  * @return void
 */
 
-static void hun_temp_sensor_thread(void *a, void *b, void *c)
+static void hum_temp_sensor_thread(void *a, void *b, void *c)
 {
     LOG_INF("Humidity-Temperature sensor thread started.");
 
@@ -278,7 +278,7 @@ int main(void)
     k_mutex_init(&sensor_data_mutex);
 
     /* Initialize sensors */
-    ret = hun_temp_sensor_init();
+    ret = hum_temp_sensor_init();
     if (ret < 0) {
         LOG_ERR("Humidity-Temperature Sensor init failed");
     }
@@ -296,7 +296,7 @@ int main(void)
     /* Start sensor threads */
     terminate_hum_temp_thread = false;
     hum_temp_tid = k_thread_create(&hum_temp_thread_data, hum_temp_stack, K_THREAD_STACK_SIZEOF(hum_temp_stack),
-                                   hun_temp_sensor_thread, NULL, NULL, NULL, PRIORITY, 0, K_NO_WAIT);
+                                   hum_temp_sensor_thread, NULL, NULL, NULL, PRIORITY, 0, K_NO_WAIT);
 
     terminate_pressure_thread = false;
     pressure_tid = k_thread_create(&pressure_thread_data, pressure_stack, K_THREAD_STACK_SIZEOF(pressure_stack),

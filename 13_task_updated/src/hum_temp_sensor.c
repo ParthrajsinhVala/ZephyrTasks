@@ -104,7 +104,7 @@ void hum_temp_sensor_process_sample(void)
 */
 
 
-int hun_temp_sensor_init(void)
+int hum_temp_sensor_init(void)
 {
     if (!device_is_ready(hts_dev)) {
         LOG_ERR("sensor: %s device not ready.", hts_dev->name);
